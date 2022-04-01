@@ -4,7 +4,7 @@ import (
 	"log"
 	"strconv"
 
-	transmission "github.com/metalmatze/transmission-exporter"
+	transmission "github.com/digitalentity/transmission-exporter"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -14,21 +14,23 @@ const (
 
 // TorrentCollector has a transmission.Client to create torrent metrics
 type TorrentCollector struct {
-	client *transmission.Client
+	client 			*transmission.Client
 
-	Status   *prometheus.Desc
-	Added    *prometheus.Desc
-	Files    *prometheus.Desc
-	Finished *prometheus.Desc
-	Done     *prometheus.Desc
-	Ratio    *prometheus.Desc
-	Download *prometheus.Desc
-	Upload   *prometheus.Desc
+	Status   		*prometheus.Desc
+	Added    		*prometheus.Desc
+	Files    		*prometheus.Desc
+	Finished 		*prometheus.Desc
+	Done     		*prometheus.Desc
+	Ratio    		*prometheus.Desc
+	Download 		*prometheus.Desc
+	Upload   		*prometheus.Desc
+	TotalDownloaded *prometheus.Desc
+	TotalUploaded   *prometheus.Desc
 
 	// TrackerStats
-	Downloads *prometheus.Desc
-	Leechers  *prometheus.Desc
-	Seeders   *prometheus.Desc
+	Downloads 		*prometheus.Desc
+	Leechers  		*prometheus.Desc
+	Seeders   		*prometheus.Desc
 }
 
 // NewTorrentCollector creates a new torrent collector with the transmission.Client
@@ -86,6 +88,18 @@ func NewTorrentCollector(client *transmission.Client) *TorrentCollector {
 			[]string{"id", "name"},
 			nil,
 		),
+		TotalDownloaded: prometheus.NewDesc(
+			namespace+collectorNamespace+"total_downloaded",
+			"Number of bytes downloaded for this torrent, ever",
+			[]string{"id", "name"},
+			nil,
+		),
+		TotalUploaded: prometheus.NewDesc(
+			namespace+collectorNamespace+"total_uploaded",
+			"Number of bytes uploaded for this torrent, ever",
+			[]string{"id", "name"},
+			nil,
+		),
 
 		// TrackerStats
 		Downloads: prometheus.NewDesc(
@@ -119,6 +133,8 @@ func (tc *TorrentCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- tc.Ratio
 	ch <- tc.Download
 	ch <- tc.Upload
+	ch <- tc.TotalDownloaded
+	ch <- tc.TotalUploaded
 	ch <- tc.Downloads
 	ch <- tc.Leechers
 	ch <- tc.Seeders
@@ -187,6 +203,18 @@ func (tc *TorrentCollector) Collect(ch chan<- prometheus.Metric) {
 			tc.Upload,
 			prometheus.GaugeValue,
 			float64(t.RateUpload),
+			id, t.Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			tc.TotalDownloaded,
+			prometheus.GaugeValue,
+			float64(t.TotalDownload),
+			id, t.Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			tc.TotalUploaded,
+			prometheus.GaugeValue,
+			float64(t.TotalUpload),
 			id, t.Name,
 		)
 

@@ -8,7 +8,7 @@ platform:
 
 workspace:
   base: /go
-  path: src/github.com/metalmatze/transmission-exporter
+  path: src/github.com/digitalentity/transmission-exporter
 
 steps:
 - name: build
@@ -31,7 +31,7 @@ steps:
       from_secret: docker_username
     password:
       from_secret: docker_password
-    repo: metalmatze/transmission-exporter
+    repo: digitalentity/transmission-exporter
     tags:
     - master
   when:
@@ -48,7 +48,7 @@ steps:
       from_secret: docker_username
     password:
       from_secret: docker_password
-    repo: metalmatze/transmission-exporter
+    repo: digitalentity/transmission-exporter
     tag:
     - 0.3
     - 0.3.0

@@ -125,6 +125,8 @@ func (c *Client) GetTorrents() ([]Torrent, error) {
 				"uploadRatio",
 				"rateDownload",
 				"rateUpload",
+				"downloadedEver",
+				"uploadedEver",
 				"downloadDir",
 				"isFinished",
 				"percentDone",

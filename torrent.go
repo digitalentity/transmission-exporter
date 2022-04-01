@@ -36,6 +36,8 @@ type (
 		UploadRatio   float64       `json:"uploadRatio"`
 		RateDownload  int           `json:"rateDownload"`
 		RateUpload    int           `json:"rateUpload"`
+		TotalDownload uint64 		`json:"downloadedEver"`
+		TotalUpload   uint64 		`json:"uploadedEver"`
 		DownloadDir   string        `json:"downloadDir"`
 		IsFinished    bool          `json:"isFinished"`
 		PercentDone   float64       `json:"percentDone"`

@@ -6,8 +6,9 @@ import (
 
 	arg "github.com/alexflint/go-arg"
 	"github.com/joho/godotenv"
-	transmission "github.com/metalmatze/transmission-exporter"
+	transmission "github.com/digitalentity/transmission-exporter"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Config gets its content from env and passes it on to different packages
@@ -49,7 +50,7 @@ func main() {
 	prometheus.MustRegister(NewSessionCollector(client))
 	prometheus.MustRegister(NewSessionStatsCollector(client))
 
-	http.Handle(c.WebPath, prometheus.Handler())
+	http.Handle(c.WebPath, promhttp.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<html>
